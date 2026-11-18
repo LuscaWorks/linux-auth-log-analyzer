@@ -15,7 +15,7 @@ failed_pattern = re.compile(
 ) 
 
 succesful_pattern = re.compile(
-    r"succesful password for (\S+) from (\S+)"
+    r"Accepted password for (\S+) from (\S+)"
 )
 
 try:
@@ -52,7 +52,7 @@ try:
     print("=== Tentativas por IP ===")
     for ip, count in failed_by_ip.items():
         print(f"{ip}: {count} tentativa(s)")
-    print("=== Eventos de login")
+    print("=== Eventos de login ===")
     for event in failed_events:
         print(f"Falha | Usuario: {event['user']} | IP: {event['ip']}")
     for event in succesful_events:
