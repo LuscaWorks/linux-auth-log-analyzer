@@ -1,0 +1,45 @@
+{
+    "summary": {
+        "successful_logins": 1,
+        "failed_logins": 5,
+        "total_ips_analyzed": 2
+    },
+    "ip_analysis": {
+        "203.0.113.50": {
+            "failed_attempts": 3,
+            "classification": "ATENCAO"
+        },
+        "198.51.100.23": {
+            "failed_attempts": 2,
+            "classification": "NORMAL"
+        }
+    },
+    "failed_events": [
+        {
+            "user": "admin",
+            "ip": "203.0.113.50"
+        },
+        {
+            "user": "admin",
+            "ip": "203.0.113.50"
+        },
+        {
+            "user": "root",
+            "ip": "203.0.113.50"
+        },
+        {
+            "user": "test",
+            "ip": "198.51.100.23"
+        },
+        {
+            "user": "test",
+            "ip": "198.51.100.23"
+        }
+    ],
+    "successful_events": [
+        {
+            "user": "lucas",
+            "ip": "192.0.2.25"
+        }
+    ]
+}
