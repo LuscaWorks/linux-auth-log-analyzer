@@ -94,7 +94,7 @@ def analyze_log_file(log_path):
         "summary": {
             "successful_logins": len(successful_events),
             "failed_logins": len(failed_events),
-            "total_ips_analyzed": len(failed_by_ip)
+            "total_ips_with_failed_logins": len(failed_by_ip)
         },
         "ip_analysis": ip_analysis,
         "failed_events": failed_events,

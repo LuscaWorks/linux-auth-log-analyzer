@@ -1,107 +1,54 @@
 from pathlib import Path
-import re
-import json
+from analyzer import analyze_log_file, save_report
 
-log_file = Path("logs/sample_auth.log")
+LOG_FILE = Path("logs/sample_auth.log")
+REPORT_FILE = Path("reports/report.json")
 
-failed_attempts = 0
-successful_login = 0
+def main():
 
-failed_by_ip = {}
-failed_events = []
-successful_events = []
-ip_analysis = {}
+    try:
+        report = analyze_log_file(LOG_FILE)
 
-failed_pattern = re.compile(
-    r"Failed password for (?:invalid user )?(\S+) from (\S+)"
-) 
+        print("=== RELATORIO ===")
 
-succesful_pattern = re.compile(
-    r"Accepted password for (\S+) from (\S+)"
-)
+        print(
+            f"Tentativas bem-sucedidas: "
+            f"{report['summary']['successful_logins']}"
+        )
 
-try:
-    with log_file.open("r", encoding="utf-8") as file:
-        for line in file:
+        print(
+            f"Tentativas mal-sucedidas: "
+            f"{report['summary']['failed_logins']}"
+        )
 
-            failed_match = failed_pattern.search(line)
-            success_match = succesful_pattern.search(line)
+        print("=== ANALISE DE IPs ===")
 
-            if failed_match:
+        for ip, data in report["ip_analysis"].items():
 
-                username = failed_match.group(1)
-                ip = failed_match.group(2)
-                failed_attempts += 1
-                failed_events.append({
-                    "user": username,
-                    "ip": ip
-                })
-                failed_by_ip[ip] = failed_by_ip.get(ip, 0) + 1
+            print(f"\nIP: {ip}")
+            print(f"Falhas: {data['failed_attempts']}")
+            print(f"Classificacao: {data['classification']}")
 
-            elif success_match:
-                username = success_match.group(1)
-                ip = success_match.group(2)
-                successful_login += 1
+        print("=== EVENTOS DE LOGIN ===")
 
-                successful_events.append({
-                    "user": username,
-                    "ip": ip
-                })
+        for event in report["failed_events"]:
+            print(
+                f"Falha | Usuario: {event['user']} "
+                f"| IP: {event['ip']}"
+            )
 
-    print("=== Relatorio ===")
-    print(f"Tentativas bem-sucedidas: {successful_login}")
-    print(f"Tentativas mal-sucedidas: {failed_attempts}")
-    print("=== Tentativas por IP ===")
-    for ip, count in failed_by_ip.items():
-        print(f"{ip}: {count} tentativa(s)")
-        if count >= 5:
-            print("Classificacao: Alto risco")
-        elif count >= 3:
-            print("Classificacao: Atenção")
-        elif count > 0:
-            print("Classificacao:Normal")
-    print("=== Eventos de login ===")
-    for event in failed_events:
-        print(f"Falha | Usuario: {event['user']} | IP: {event['ip']}")
-    for event in successful_events:
-        print(f"Sucesso | Usuario: {event['user']} | IP: {event['ip']}\n")
+        for event in report["successful_events"]:
+            print(
+                f"Sucesso | Usuario: {event['user']} "
+                f"| IP: {event['ip']}"
+            )
 
-    reports_dir = Path("reports")
-    reports_dir.mkdir(parents=True, exist_ok=True)
+        save_report(report, REPORT_FILE)
 
-    for ip, count in failed_by_ip.items():
-        if count >= 5:
-            classification = "ALTO RISCO"
-        elif count >= 3:
-            classification = "ATENCAO"
-        else:
-            classification = "NORMAL"
-        ip_analysis[ip]= {
-            "failed_attempts": count,
-            "classification": classification
-    }
-    report = {
-        "summary": {
-            "successful_logins": successful_login,
-            "failed_logins": failed_attempts,
-            "total_ips_analyzed": len(failed_by_ip),
-        },
-        "ip_analysis": ip_analysis,
-        "failed_events": failed_events,
-        "successful_events": successful_events
-    }
-    report_path = reports_dir / "report.json"
+        print(f"\nRelatorio JSON salvo em: {REPORT_FILE}")
 
-    with report_path.open("w", encoding="utf-8") as json_file:
-        json.dump(
-            report,
-            json_file,
-            indent=4,
-            ensure_ascii=False
-    )
+    except FileNotFoundError:
+        print("Erro: arquivo de log nao encontrado.")
 
-    print(f"Relatorio Json Salvo em {report_path}")
-
-
-except FileNotFoundError:
-    print("Erro: Aquivo de log nao encontrado")
+if __name__ == "__main__":
+    main()
