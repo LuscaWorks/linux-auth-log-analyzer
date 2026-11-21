@@ -2,7 +2,7 @@
     "summary": {
         "successful_logins": 1,
         "failed_logins": 5,
-        "total_ips_analyzed": 2
+        "total_ips_with_failed_logins": 2
     },
     "ip_analysis": {
         "203.0.113.50": {

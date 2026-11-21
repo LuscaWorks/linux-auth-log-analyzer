@@ -1,6 +1,4 @@
-
 import json
-
 import pytest
 
 from analyzer import (
@@ -87,7 +85,7 @@ def test_analyze_log_file(tmp_path):
 
     assert report["summary"]["failed_logins"] == 4
     assert report["summary"]["successful_logins"] == 1
-    assert report["summary"]["total_ips_analyzed"] == 2
+    assert report["summary"]["total_ips_with_failed_logins"] == 2
 
     assert report["ip_analysis"]["203.0.113.50"]["classification"] == "ATENCAO"
     assert report["ip_analysis"]["198.51.100.23"]["classification"] == "NORMAL"

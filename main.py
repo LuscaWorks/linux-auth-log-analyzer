@@ -25,7 +25,7 @@ def main():
 
         for ip, data in report["ip_analysis"].items():
 
-            print(f"\nIP: {ip}")
+            print(f"IP: {ip}")
             print(f"Falhas: {data['failed_attempts']}")
             print(f"Classificacao: {data['classification']}")
 
